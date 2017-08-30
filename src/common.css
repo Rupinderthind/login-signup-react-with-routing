@@ -1,0 +1,17 @@
+.mainHeading{
+	text-align: center;
+	padding: 40px 0;
+}
+.formCon{
+	width: 300px;
+	margin: auto;
+	padding: 10px;
+}
+.loading{
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	background: rgba(0,0,0,0.3)
+}
