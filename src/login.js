@@ -31,39 +31,54 @@ class Login extends React.Component {
     	disabled: false,
       	username: '',
       	password: '',
-      	message: "Something went wrong! Please try again",
+      	message: "",
       	showMsg: false
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
    }
   
-   onChange(event){
+  onChange(event){
     console.log(event.target.name)
     this.setState({[event.target.name]: event.target.value});
   }
   onSubmit(e){
     e.preventDefault();
-    this.setState({disabled: true});
     const { username, password } = this.state;
-    const data = {'userName' : username, 'password' : password, 'notificationToken': 'test'};
-    console.log(data);
+    if (username == '') {
+      this.setState({message: "Please enter phone number"})
+      this.setState({showMsg: true});
+      setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
+    }
+    else if(password == ''){
+      this.setState({message: "Please enter password"})
+      this.setState({showMsg: true});
+      setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
+    }
+    else{
+      this.setState({disabled: true});
+      const data = {'userName' : username, 'password' : password, 'notificationToken': 'test'};
+      console.log(data);
 
-    axios.post('http://www.shinewebservices.com/bezel/public/signin', data)
-      .then((response) => {
-      	console.log(response)
-      	this.setState({disabled: false});
-      	if (response.data.success) {
-      		console.log('init');
-      		localStorage.setItem('user_auth', JSON.stringify(response.data));
-      		browserHistory.push('/dashboard');
-      	}
-      	else{
-      		console.log('wrong detail');
-      		this.setState({showMsg: true});
-      		setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
-      	}
-      });
+      axios.post('http://www.shinewebservices.com/bezel/public/signin', data)
+        .then((response) => {
+          console.log(response)
+          this.setState({disabled: false});
+          if (response.data.success) {
+            console.log('init');
+            localStorage.setItem('user_auth', JSON.stringify(response.data));
+            browserHistory.push('/dashboard');
+          }
+          else{
+            console.log('wrong detail');
+            this.setState({message: "Something went wrong! Please try again"})
+            this.setState({showMsg: true});
+            setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
+          }
+        });
+    }
+
+    
   }
 
 
@@ -73,13 +88,15 @@ class Login extends React.Component {
         <div>
         	<MuiThemeProvider>
 	    		<div className="formCon">
-		           	<TextField
-				      hintText="Username Field"
-				      floatingLabelText="Username"
+		        <TextField
+				      hintText="Phone Number Field"
+				      floatingLabelText="Phone Number"
 				      fullWidth={true}
 				      name="username" 
 				      value={username} 
 				      onChange={this.onChange}
+              type="number"
+
 				    /><br />
 				    <TextField
 				      hintText="Password Field"

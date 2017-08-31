@@ -30,52 +30,44 @@ class Login extends Component {
   }
   render() {
     return (
-    	<div>
-      		<FlatButton {...this.props} label="home" onClick={() => this.goto('home')}/>
-      		<FlatButton {...this.props} label="Login" onClick={() => this.goto('login')}/>
-      		<FlatButton {...this.props} label="Signup" onClick={() => this.goto('signup')} />
-      	</div>
+      <div>
+          <FlatButton {...this.props} label="home" onClick={() => this.goto('home')}/>
+          <FlatButton {...this.props} label="Login" onClick={() => this.goto('login')}/>
+          <FlatButton {...this.props} label="Signup" onClick={() => this.goto('signup')} />
+        </div>
     );
   }
 }
 
 class Logged extends React.Component{
-	constructor(props) {
+  constructor(props) {
       super(props);
-      this.logout = this.logout.bind(this);
-    }
-
-    logout(){
-    	console.log('test');
-    	localStorage.removeItem('user_auth');
-    	browserHistory.push('/home');
-    	this.forceUpdate();
     }
     render() {
-      	return (
-		  <IconMenu
-		    iconButtonElement={
-		      <IconButton><MoreVertIcon /></IconButton>
-		    }
-		    targetOrigin={{horizontal: 'right', vertical: 'top'}}
-		    anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-		  >
-		    <MenuItem primaryText="Refresh" />
-		    <MenuItem primaryText="Help" />
-		    <MenuItem primaryText="Sign out" onClick={this.logout}/>
-		  </IconMenu>
-	  	);
-	 }
+        return (
+      <IconMenu
+        iconButtonElement={
+          <IconButton><MoreVertIcon /></IconButton>
+        }
+        targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      >
+        <MenuItem primaryText="Refresh" />
+        <MenuItem primaryText="Help" />
+        <MenuItem primaryText="Sign out" onClick={this.props.logout}/>
+      </IconMenu>
+      );
+   }
 }
 
 
 class Header extends React.Component {
 
-   	constructor(props) {
+    constructor(props) {
       super(props);
       this.state = {
-      	open: false,
-      	logged: false
+        open: false,
+        logged: false
       };
       this.logOut = this.logOut.bind(this);
     }
@@ -83,23 +75,21 @@ class Header extends React.Component {
     handleClose = () => this.setState({open: false});
 
     logOut(){
-    	console.log('test');
-    	localStorage.removeItem('user_auth');
-    	browserHistory.push('/home');
-    	this.forceUpdate();
+      console.log('test123');
+      localStorage.removeItem('user_auth');
+      browserHistory.push('/home');
+      this.setState({'logged': false});
     }
 
-
-
     componentDidMount() {
-    	var userData = JSON.parse(localStorage.getItem('user_auth'));
-    	console.log(userData)
-    	if (userData != null && userData.success) {
-    		this.setState({'logged': true});
-    	}
-    	else{
-    		this.setState({'logged': false});
-    	}
+      var userData = JSON.parse(localStorage.getItem('user_auth'));
+      console.log(userData)
+      if (userData != null && userData.success) {
+        this.setState({'logged': true});
+      }
+      else{
+        this.setState({'logged': false});
+      }
       console.log(userData)
    }
 
@@ -109,12 +99,12 @@ class Header extends React.Component {
            <AppBar
               title=""
               onLeftIconButtonTouchTap={this.handleToggle}
-              iconElementRight={this.state.logged ? <Logged></Logged> : <Login />}
+              iconElementRight={this.state.logged ? (<Logged logout={this.logOut}></Logged>) : <Login />}
             />
             <Drawer 
-            	open={this.state.open}
-            	docked={false}
-            	onRequestChange={(open) => this.setState({open})}
+              open={this.state.open}
+              docked={false}
+              onRequestChange={(open) => this.setState({open})}
             >
               <MenuItem onClick={this.handleClose}>Menu Item</MenuItem>
               <MenuItem onClick={this.handleClose}>Menu Item 2</MenuItem>

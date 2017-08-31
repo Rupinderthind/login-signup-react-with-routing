@@ -47,9 +47,9 @@ class Signup extends React.Component {
   onSubmit(e){
     e.preventDefault();
     this.setState({disabled: true});
-    setTimeout(function() { this.setState({disabled: false}); }.bind(this), 3000);
     // get our form data out of state
     const { fullname, email, number, password } = this.state;
+
     const data = {'name' : fullname, 'email': email, 'number': number, 'password' : password, 'notificationToken': 'test', 'deviceId' : 'testDeviceID'};
 
     axios.post('http://www.shinewebservices.com/bezel/public/registration', data)
@@ -63,7 +63,7 @@ class Signup extends React.Component {
           this.setState({showMsg: true});
           setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
         }
-        //access the results here....
+        this.setState({disabled: false});
       });
   }
 
