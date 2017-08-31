@@ -7,6 +7,7 @@ import Checkbox from 'material-ui/Checkbox';
 import RaisedButton from 'material-ui/RaisedButton';
 import LinearLoading from './loading';
 import { browserHistory } from 'react-router';
+import SnackBar from './snackbar';
 
 const style = {
   height: 100,
@@ -19,7 +20,7 @@ const style = {
     color: 'red'
   },
   button: {
-  	marginTop: 25
+    marginTop: 25
   }
 };
 
@@ -27,11 +28,13 @@ class Signup extends React.Component {
    constructor(props) {
     super(props);
     this.state = {
-    	disabled: false,
+      disabled: false,
       fullname: '',
       email: '',
       number: '',
       password: '',
+      message: "",
+      showMsg: false
     }
     this.onChange = this.onChange.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
@@ -47,31 +50,38 @@ class Signup extends React.Component {
     setTimeout(function() { this.setState({disabled: false}); }.bind(this), 3000);
     // get our form data out of state
     const { fullname, email, number, password } = this.state;
-    const data = {'fullname' : fullname, 'email': email, 'number': number, 'password' : password};
-    console.log(data);
+    const data = {'name' : fullname, 'email': email, 'number': number, 'password' : password, 'notificationToken': 'test', 'deviceId' : 'testDeviceID'};
 
-    //axios.post('/', data)
-      //.then((result) => {
-      	//console.log(result)
+    axios.post('http://www.shinewebservices.com/bezel/public/registration', data)
+      .then((result) => {
+        console.log(result)
+        if (result.data.success) {
+          browserHistory.push('/login');
+        }
+        else{
+          this.setState({message: result.data.error_msg});
+          this.setState({showMsg: true});
+          setTimeout(function() { this.setState({showMsg: false}); }.bind(this), 3000);
+        }
         //access the results here....
-      //});
+      });
   }
 
 
    render() {
-   	const { fullname, email, number, password } = this.state;
+    const { fullname, email, number, password } = this.state;
       return (
         <div>
-        	<MuiThemeProvider>
-	    		<div className="formCon">
-		           	<TextField
-				      hintText="Full Name Field"
-				      floatingLabelText="Full Name"
-				      fullWidth={true}
-				      name="fullname" 
-				      value={fullname} 
-				      onChange={this.onChange}
-				    /><br />
+          <MuiThemeProvider>
+          <div className="formCon">
+                <TextField
+              hintText="Full Name Field"
+              floatingLabelText="Full Name"
+              fullWidth={true}
+              name="fullname" 
+              value={fullname} 
+              onChange={this.onChange}
+            /><br />
             <TextField
               hintText="Email Field"
               floatingLabelText="Email"
@@ -90,17 +100,18 @@ class Signup extends React.Component {
               type="number" 
               onChange={this.onChange}
             /><br />
-				    <TextField
-				      hintText="Password Field"
-				      floatingLabelText="Password"
-				      type="password"
-				      fullWidth={true}
-				      name="password" 
-				      value={password} 
-				      onChange={this.onChange}
-				    />
-			        <RaisedButton disabled={this.state.disabled} onClick={this.onSubmit} label="Signup" primary={true} style={style.button} fullWidth={true}/>
-		       	</div>
+            <TextField
+              hintText="Password Field"
+              floatingLabelText="Password"
+              type="password"
+              fullWidth={true}
+              name="password" 
+              value={password} 
+              onChange={this.onChange}
+            />
+              <RaisedButton disabled={this.state.disabled} onClick={this.onSubmit} label="Signup" primary={true} style={style.button} fullWidth={true}/>
+              <SnackBar message={this.state.message} open={this.state.showMsg}></SnackBar>
+            </div>
            </MuiThemeProvider>
         </div>
       );
